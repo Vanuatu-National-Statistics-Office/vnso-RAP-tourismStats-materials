@@ -1,0 +1,16 @@
+---
+title: "International Visitor Arrival Statistics - `r format(Sys.Date(), '%B %Y')` Highlights"
+output: 
+  word_document:
+    reference_docx: styles_reference.docx
+---
+
+
+```{r setup, include=FALSE}
+# Set echo=FALSE as default for code cells
+knitr::opts_chunk$set(echo = FALSE, 
+                      warning = FALSE,
+                      dpi = 600)
+```
+
+#Introduction
