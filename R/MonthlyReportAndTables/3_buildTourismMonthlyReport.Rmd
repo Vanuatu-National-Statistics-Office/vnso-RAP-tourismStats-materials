@@ -1,0 +1,201 @@
+---
+title: "International Vistor Arrivals Statistics - `r format(Sys.Date(), '%B %Y')` Highlights"
+output: 
+  word_document: 
+    reference_docx: styles_reference.docx #including the logos
+---
+
+```{r setup, include=FALSE}
+# Set echo=FALSE as default for code cells
+knitr::opts_chunk$set(echo = FALSE, 
+                      warning = FALSE,
+                      dpi = 600)
+```
+
+```{r preparation, include = FALSE}
+# Load the required libraries
+library(knitr) # Creating documents
+library(flextable) # Nicely formatted tables
+library(rnaturalearth) # World map
+library(sf) # Working with spatial data
+library(ggplot2) # Creating plots
+library(dplyr) # Working with data
+library(tidyr) # For pivoting data.frames
+library(janitor) # Adding row and column totals
+
+# Set the table formatting defaults
+set_flextable_defaults(font.family="Times New Roman", font.size=5, font.color="black",
+                       text.align="left", table.layout="fixed", theme_fun="theme_booktabs")
+
+# Note where VNSO code/data is on current computer
+repository <- file.path("..", "..")
+
+# Note the open data path
+openDataFolder <- file.path(repository, "data", "open")
+
+# Note the secure data path
+secureDataFolder <- file.path(repository, "data", "secure")
+
+# Note the output data path
+
+outputDataFolder <- file.path(repository, "outputs")
+
+# Some general ggplot settings
+plotTextSize <- 9
+xAxisText <- list(
+  "angle" = 35,
+  "size" = plotTextSize,
+  "vjust" = 1.1,
+  "hjust" = 1
+)
+```
+
+
+```{r load data}
+
+# Load the processed trade statistics for month of interest
+# Read in the processed TOURISM data from output folder of the repository 
+
+tourismProcessedFile<- file.path(outputDataFolder, "OUT_PROC_Clean_Example.csv")
+tourismProcessed <- read.csv(tourismProcessedFile, header = TRUE, na.strings = c("","NA","NULL","null"))
+
+# Get the current month and year of data
+currentMonth <- unique(tourismProcessed$Month)
+currentYear <- unique(tourismProcessed$Year)
+
+# Read in the previously published historical TOURISM data from output folder of the repository 
+
+tourismHistoricFile<- file.path(outputDataFolder, "SEC_OUT_HIST_DATA.csv")
+tourismHistoric <- read.csv(tourismHistoricFile, header = TRUE, na.strings = c("","NA","NULL","null"))
+
+```
+
+
+# National Sustainable Development Plan Indicators (NSDP)
+
+```{r NSDP indicators}
+### Calculating NSDP Indicators
+
+# ECO 3.2.1 Average annual household income from tourism
+
+# ECO 3.2.2 Annual change in tourism by air and sea arrivals
+
+# ECO 3.2.3 Proportion of visitors traveling to outer islands
+
+
+```
+
+
+```{r NSDP table}
+
+# Create the NSDP table
+x <- 200
+y <- 100
+z <- 50
+
+nsdpIndicators <- data.frame(
+  "Policy Objectives"=c("ECO 3.2: Deepen the integration of the tourism sector into the rural economy to spread opportunities to rural communities"),
+  "SMART Indicators"=c("ECO 3.2.1 Average annual household income from tourism",
+                       "ECO 3.2.2.Annual change in island tourism by air and sea arrivals",
+                       "ECO 3.2.3 Proportion of visitors
+traveling to outer islands"),
+
+  "Indicator Value"= c(
+    x,
+    y,
+    z
+  ),check.names=FALSE, stringsAsFactors=FALSE)
+
+
+# Round the indicator values
+#nsdpIndicators$`Indicator Value` <- round(nsdpIndicators$`Indicator Value`, digits = 2)
+
+# Initialize a flextable object for NSDP table
+indicatorsTable <- flextable(nsdpIndicators)
+
+# Add a header row and set background colour
+indicatorsTable <- bg(indicatorsTable, bg="coral1", part="header")
+
+# Set the vertical alignment to top
+indicatorsTable <- valign(indicatorsTable, valign="top", part="all")
+
+# Merge repeated values in the Policy Objectives column
+indicatorsTable <- merge_v(indicatorsTable, j = "Policy Objectives")
+
+# Set table width to 100%
+indicatorsTable <- set_table_properties(indicatorsTable, width=1, layout="autofit")
+
+# Set the theme
+indicatorsTable <- theme_booktabs(indicatorsTable)
+
+# Print table
+indicatorsTable
+```
+ 
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+# Visitor Arrivals by Usual Country of Residence
+
+```{r major partner country trade, warning=FALSE, fig.width=5.5, fig.height=2.5}
+
+## Getting latest statistics ##
+
+countryVistorsGrouped <- tourismProcessed %>%
+  filter(port %in% c("SAIR","SAIRP","VAIR","VAIRP"))%>%
+  filter(visitor_resident %in% ("Visitor"))%>%
+  filter(arr_depart %in%("ARRIVAL"))%>%
+  group_by(visitors_by_region) %>%
+  count()
+
+# Drop Vanuatu
+countryVisitedNoVanuatu <- countryVistorsGrouped %>%
+  filter(Country.or.Area.x != "Vanuatu")
+
+# Order table by the country with most visitor
+countryVisitedOrdered <- countryVisitedNoVanuatu %>%
+  arrange(desc(n))
+colnames(countryVisitedOrdered)[1] <- "Country"
+
+# Get the polygons for the world
+world <- rnaturalearth::ne_countries(type = "countries", scale = "medium", returnclass = "sf")
+
+# Merge in my example data
+world <- merge(world, countryVisitedOrdered, by.x = "admin", by.y = "Country", all.x = TRUE)
+
+# Plot with ggplot
+ggplot(data = world) +
+  geom_sf(aes(fill = countryVisitedOrdered)) + 
+  guides(fill=guide_legend(title="Visitor Arrivals by Usual Country of Residence\n(number)")) +
+  theme(legend.title = element_text(size = 9))
+
+```
+
+# Visitor Arrivals 10 year monthly trend by Air and Cruise, December 2009 - December 2019
+
+```{r principle exports through time, fig.height=5, fig.width = 15}
+# Calculate value of visitors by Air and Cruise for current month for historical data
+
+VisitorsValue <- tourismHistoric %>%
+  filter(Month == currentMonth)
+
+# Create a line graph
+ggplot(data = VisitorsValue, aes(x = Year, y = Value, group = Visitor.Arrivals)) +
+  geom_line(aes(color = Visitor.Arrivals), size = 1.5, alpha = 0.75) +
+  labs(y = "Number of Visitors") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = xAxisText$angle,
+                                   vjust = xAxisText$vjust, 
+                                   hjust = xAxisText$hjust, 
+                                   size =xAxisText$size),
+        axis.title.y = element_text(size = plotTextSize),
+        axis.title.x = element_blank(),
+        legend.title = element_text(size = plotTextSize))
+
+```

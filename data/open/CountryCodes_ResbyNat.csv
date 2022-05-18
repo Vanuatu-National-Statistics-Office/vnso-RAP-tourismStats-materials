@@ -180,7 +180,7 @@ OTHER COUNTRIES,Ukraine,UKR
 OTHER COUNTRIES,Åland Islands,ALA
 OTHER COUNTRIES,Guernsey,GGY
 OTHER COUNTRIES,Jersey,JEY
-OTHER COUNTRIES,Sark,
+OTHER COUNTRIES,Sark,CQQ
 OTHER COUNTRIES,Denmark,DNK
 OTHER COUNTRIES,Estonia,EST
 OTHER COUNTRIES,Faroe Islands,FRO
@@ -193,7 +193,7 @@ OTHER COUNTRIES,Lithuania,LTU
 OTHER COUNTRIES,Norway,NOR
 OTHER COUNTRIES,Svalbard and Jan Mayen Islands,SJM
 OTHER COUNTRIES,Sweden,SWE
-BRITISH,United Kingdom of Great Britain and Northern Ireland National (Overseas),GBN
+BRITISH,United Kingdom of Great Britain and Northern Ireland Nationals (Overseas),GBN
 BRITISH,United Kingdom of Great Britain and Northern Ireland,GBR
 OTHER COUNTRIES,Albania,ALB
 OTHER COUNTRIES,Andorra,AND
@@ -219,6 +219,7 @@ OTHER COUNTRIES,Liechtenstein,LIE
 OTHER COUNTRIES,Luxembourg,LUX
 OTHER COUNTRIES,Monaco,MCO
 OTHER COUNTRIES,Netherlands,NLD
+OTHER COUNTRIES,Taiwan,TWN
 OTHER COUNTRIES,Switzerland,CHE
 AUSTRALIA,Australia,AUS
 PACIFIC ISLANDER,Christmas Island,CXR
