@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ---
 title: "International Visitor Arrival Statistics - `r format(Sys.Date(), '%B %Y')` Highlights"
 output: 
@@ -13,4 +14,21 @@ knitr::opts_chunk$set(echo = FALSE,
                       dpi = 600)
 ```
 
+=======
+---
+title: "International Visitor Arrival Statistics - `r format(Sys.Date(), '%B %Y')` Highlights"
+output: 
+  word_document:
+    reference_docx: styles_reference.docx
+---
+
+
+```{r setup, include=FALSE}
+# Set echo=FALSE as default for code cells
+knitr::opts_chunk$set(echo = FALSE, 
+                      warning = FALSE,
+                      dpi = 600)
+```
+
+>>>>>>> 912e49578f4c80132746eda102da0e854ded3746
 #Introduction
