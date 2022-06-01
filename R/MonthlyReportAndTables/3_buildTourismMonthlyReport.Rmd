@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = FALSE,
                       dpi = 600)
 ```
 
+
 ```{r preparation, include = FALSE}
 # Load the required libraries
 library(knitr) # Creating documents
@@ -143,6 +144,7 @@ indicatorsTable
 
 # International Visitor Arrivals 10 year monthly trend by Air and Cruise, December 2009 - December 2019- Line Graph
 
+
 ```{r visitors arrivals through time, fig.height=5, fig.width = 15}
 # Calculate value of visitors by Air and Cruise for current month for historical data
 
@@ -236,7 +238,4 @@ ggplot(data = world) +
 
 
 ```
-
-
-
 
