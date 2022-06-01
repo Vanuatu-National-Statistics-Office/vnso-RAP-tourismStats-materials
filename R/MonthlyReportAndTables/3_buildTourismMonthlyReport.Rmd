@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = FALSE,
                       dpi = 600)
 ```
 
+
 ```{r preparation, include = FALSE}
 # Load the required libraries
 library(knitr) # Creating documents
@@ -71,17 +72,19 @@ tourismHistoric <- read.csv(tourismHistoricFile, header = TRUE, na.strings = c("
 ```
 
 
-# National Sustainable Development Plan Indicators (NSDP)
+# National Sustainable Development Plan Indicators (NSDP)- Table
 
 ```{r NSDP indicators}
 ### Calculating NSDP Indicators
 
 # ECO 3.2.1 Average annual household income from tourism
+x <- 200
 
 # ECO 3.2.2 Annual change in tourism by air and sea arrivals
+y <- 100
 
 # ECO 3.2.3 Proportion of visitors traveling to outer islands
-
+z <- 50
 
 ```
 
@@ -89,9 +92,6 @@ tourismHistoric <- read.csv(tourismHistoricFile, header = TRUE, na.strings = c("
 ```{r NSDP table}
 
 # Create the NSDP table
-x <- 200
-y <- 100
-z <- 50
 
 nsdpIndicators <- data.frame(
   "Policy Objectives"=c("ECO 3.2: Deepen the integration of the tourism sector into the rural economy to spread opportunities to rural communities"),
@@ -141,9 +141,44 @@ indicatorsTable
 &nbsp;  
 &nbsp;  
 
-# Visitor Arrivals by Usual Country of Residence
 
-```{r major partner country trade, warning=FALSE, fig.width=5.5, fig.height=2.5}
+# International Visitor Arrivals 10 year monthly trend by Air and Cruise, December 2009 - December 2019- Line Graph
+
+
+```{r visitors arrivals through time, fig.height=5, fig.width = 15}
+# Calculate value of visitors by Air and Cruise for current month for historical data
+
+VisitorsValue <- tourismHistoric %>%
+  filter(Month == currentMonth)
+
+# Create a line graph
+ggplot(data = VisitorsValue, aes(x = Year, y = Value, group = Visitor.Arrivals)) +
+  geom_line(aes(color = Visitor.Arrivals), size = 1.5, alpha = 0.75) +
+  labs(y = "Number of Visitors") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = xAxisText$angle,
+                                   vjust = xAxisText$vjust, 
+                                   hjust = xAxisText$hjust, 
+                                   size =xAxisText$size),
+        axis.title.y = element_text(size = plotTextSize),
+        axis.title.x = element_blank(),
+        legend.title = element_text(size = plotTextSize))
+
+```
+
+
+# Sex by Type of Passsenger- Bar Chart
+
+```{r main reasons for visiting Vanuatu, warning=FALSE, fig.width=5.5, fig.height=2.5}
+
+
+
+```
+
+
+# Visitor Arrivals by Usual Country of Residence- Map
+
+```{r country orginating from, warning=FALSE, fig.width=5.5, fig.height=2.5}
 
 ## Getting latest statistics ##
 
@@ -177,25 +212,30 @@ ggplot(data = world) +
 
 ```
 
-# Visitor Arrivals 10 year monthly trend by Air and Cruise, December 2009 - December 2019
 
-```{r principle exports through time, fig.height=5, fig.width = 15}
-# Calculate value of visitors by Air and Cruise for current month for historical data
+# Age by Country of Usual Residence- Table (group ages by country)
 
-VisitorsValue <- tourismHistoric %>%
-  filter(Month == currentMonth)
+```{r main islands tourists visit in Vanuatu, warning=FALSE, fig.width=5.5, fig.height=2.5}
 
-# Create a line graph
-ggplot(data = VisitorsValue, aes(x = Year, y = Value, group = Visitor.Arrivals)) +
-  geom_line(aes(color = Visitor.Arrivals), size = 1.5, alpha = 0.75) +
-  labs(y = "Number of Visitors") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = xAxisText$angle,
-                                   vjust = xAxisText$vjust, 
-                                   hjust = xAxisText$hjust, 
-                                   size =xAxisText$size),
-        axis.title.y = element_text(size = plotTextSize),
-        axis.title.x = element_blank(),
-        legend.title = element_text(size = plotTextSize))
+
 
 ```
+
+
+# Visitor Arrivals Purpose of Visit- Infographic (main reasons are holiday, buinsess, visiting friends)
+
+```{r main reasons for visiting Vanuatu, warning=FALSE, fig.width=5.5, fig.height=2.5}
+
+
+
+```
+
+
+# Proportion of Visitors to Outer Islands- Bar Chart 
+
+```{r main islands tourists visit in Vanuatu, warning=FALSE, fig.width=5.5, fig.height=2.5}
+
+
+
+```
+
