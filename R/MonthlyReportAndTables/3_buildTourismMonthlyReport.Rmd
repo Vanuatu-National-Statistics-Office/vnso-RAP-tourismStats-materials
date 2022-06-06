@@ -52,7 +52,7 @@ xAxisText <- list(
 ```
 
 
-```{r load data}
+```{r load_data}
 
 # Load the processed trade statistics for month of interest
 # Read in the processed TOURISM data from output folder of the repository 
@@ -60,21 +60,17 @@ xAxisText <- list(
 tourismProcessedFile<- file.path(outputDataFolder, "OUT_PROC_Clean_Example.csv")
 tourismProcessed <- read.csv(tourismProcessedFile, header = TRUE, na.strings = c("","NA","NULL","null"))
 
-# Get the current month and year of data
-currentMonth <- unique(tourismProcessed$Month)
-currentYear <- unique(tourismProcessed$Year)
-
 # Read in the previously published historical TOURISM data from output folder of the repository 
 
-tourismHistoricFile<- file.path(outputDataFolder, "SEC_OUT_HIST_DATA.csv")
-tourismHistoric <- read.csv(tourismHistoricFile, header = TRUE, na.strings = c("","NA","NULL","null"))
+#tourismHistoricFile<- file.path(outputDataFolder, "SEC_OUT_HIST_DATA.csv")
+#tourismHistoric <- read.csv(tourismHistoricFile, header = TRUE, na.strings = c("","NA","NULL","null"))
 
 ```
 
 
 # National Sustainable Development Plan Indicators (NSDP)- Table
 
-```{r NSDP indicators}
+```{r NSDP_indicators}
 ### Calculating NSDP Indicators
 
 # ECO 3.2.1 Average annual household income from tourism
@@ -89,7 +85,7 @@ z <- 50
 ```
 
 
-```{r NSDP table}
+```{r NSDP_table}
 
 # Create the NSDP table
 
@@ -108,7 +104,7 @@ traveling to outer islands"),
 
 
 # Round the indicator values
-#nsdpIndicators$`Indicator Value` <- round(nsdpIndicators$`Indicator Value`, digits = 2)
+nsdpIndicators$`Indicator Value` <- round(nsdpIndicators$`Indicator Value`, digits = 2)
 
 # Initialize a flextable object for NSDP table
 indicatorsTable <- flextable(nsdpIndicators)
@@ -145,31 +141,32 @@ indicatorsTable
 # International Visitor Arrivals 10 year monthly trend by Air and Cruise, December 2009 - December 2019- Line Graph
 
 
-```{r visitors arrivals through time, fig.height=5, fig.width = 15}
+```{r visits_over_time, fig.height=5, fig.width = 15}
 # Calculate value of visitors by Air and Cruise for current month for historical data
 
-VisitorsValue <- tourismHistoric %>%
-  filter(Month == currentMonth)
+### The following needs a value for "currentMonth" - needs either setting as a value or extracting from data
+# VisitorsValue <- tourismHistoric %>%
+#   filter(Month == currentMonth)
 
 # Create a line graph
-ggplot(data = VisitorsValue, aes(x = Year, y = Value, group = Visitor.Arrivals)) +
-  geom_line(aes(color = Visitor.Arrivals), size = 1.5, alpha = 0.75) +
-  labs(y = "Number of Visitors") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = xAxisText$angle,
-                                   vjust = xAxisText$vjust, 
-                                   hjust = xAxisText$hjust, 
-                                   size =xAxisText$size),
-        axis.title.y = element_text(size = plotTextSize),
-        axis.title.x = element_blank(),
-        legend.title = element_text(size = plotTextSize))
+# ggplot(data = VisitorsValue, aes(x = Year, y = Value, group = Visitor.Arrivals)) +
+#   geom_line(aes(color = Visitor.Arrivals), size = 1.5, alpha = 0.75) +
+#   labs(y = "Number of Visitors") +
+#   theme_minimal() +
+#   theme(axis.text.x = element_text(angle = xAxisText$angle,
+#                                    vjust = xAxisText$vjust, 
+#                                    hjust = xAxisText$hjust, 
+#                                    size =xAxisText$size),
+#         axis.title.y = element_text(size = plotTextSize),
+#         axis.title.x = element_blank(),
+#         legend.title = element_text(size = plotTextSize))
 
 ```
 
 
 # Sex by Type of Passsenger- Bar Chart
 
-```{r main reasons for visiting Vanuatu, warning=FALSE, fig.width=5.5, fig.height=2.5}
+```{r visit_reasons, warning=FALSE, fig.width=5.5, fig.height=2.5}
 
 
 
@@ -178,7 +175,7 @@ ggplot(data = VisitorsValue, aes(x = Year, y = Value, group = Visitor.Arrivals))
 
 # Visitor Arrivals by Usual Country of Residence- Map
 
-```{r country orginating from, warning=FALSE, fig.width=5.5, fig.height=2.5}
+```{r originating_country, warning=FALSE, fig.width=5.5, fig.height=2.5}
 
 ## Getting latest statistics ##
 
@@ -186,27 +183,21 @@ countryVistorsGrouped <- tourismProcessed %>%
   filter(port %in% c("SAIR","SAIRP","VAIR","VAIRP"))%>%
   filter(visitor_resident %in% ("Visitor"))%>%
   filter(arr_depart %in%("ARRIVAL"))%>%
-  group_by(visitors_by_region) %>%
-  count()
-
-# Drop Vanuatu
-countryVisitedNoVanuatu <- countryVistorsGrouped %>%
-  filter(Country.or.Area.x != "Vanuatu")
-
-# Order table by the country with most visitor
-countryVisitedOrdered <- countryVisitedNoVanuatu %>%
+  group_by(visiors_by_region) %>%
+  count() %>%
   arrange(desc(n))
-colnames(countryVisitedOrdered)[1] <- "Country"
+
+colnames(countryVistorsGrouped)[1] <- "Country"
 
 # Get the polygons for the world
 world <- rnaturalearth::ne_countries(type = "countries", scale = "medium", returnclass = "sf")
 
 # Merge in my example data
-world <- merge(world, countryVisitedOrdered, by.x = "admin", by.y = "Country", all.x = TRUE)
+world <- merge(world, countryVistorsGrouped, by.x = "admin", by.y = "Country", all.x = TRUE)
 
 # Plot with ggplot
 ggplot(data = world) +
-  geom_sf(aes(fill = countryVisitedOrdered)) + 
+  geom_sf(aes(fill = n)) + 
   guides(fill=guide_legend(title="Visitor Arrivals by Usual Country of Residence\n(number)")) +
   theme(legend.title = element_text(size = 9))
 
@@ -215,7 +206,7 @@ ggplot(data = world) +
 
 # Age by Country of Usual Residence- Table (group ages by country)
 
-```{r main islands tourists visit in Vanuatu, warning=FALSE, fig.width=5.5, fig.height=2.5}
+```{r age_country_residence, warning=FALSE, fig.width=5.5, fig.height=2.5}
 
 
 
@@ -224,7 +215,7 @@ ggplot(data = world) +
 
 # Visitor Arrivals Purpose of Visit- Infographic (main reasons are holiday, buinsess, visiting friends)
 
-```{r main reasons for visiting Vanuatu, warning=FALSE, fig.width=5.5, fig.height=2.5}
+```{r visit_reasons_graphic, warning=FALSE, fig.width=5.5, fig.height=2.5}
 
 
 
@@ -233,7 +224,7 @@ ggplot(data = world) +
 
 # Proportion of Visitors to Outer Islands- Bar Chart 
 
-```{r main islands tourists visit in Vanuatu, warning=FALSE, fig.width=5.5, fig.height=2.5}
+```{r prop_outer_islands, warning=FALSE, fig.width=5.5, fig.height=2.5}
 
 
 
