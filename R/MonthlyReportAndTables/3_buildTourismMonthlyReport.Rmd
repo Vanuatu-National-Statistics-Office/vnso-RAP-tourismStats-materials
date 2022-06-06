@@ -184,26 +184,20 @@ countryVistorsGrouped <- tourismProcessed %>%
   filter(visitor_resident %in% ("Visitor"))%>%
   filter(arr_depart %in%("ARRIVAL"))%>%
   group_by(visiors_by_region) %>%
-  count()
-
-# Drop Vanuatu
-countryVisitedNoVanuatu <- countryVistorsGrouped %>%
-  filter(Country.or.Area.x != "Vanuatu")
-
-# Order table by the country with most visitor
-countryVisitedOrdered <- countryVisitedNoVanuatu %>%
+  count() %>%
   arrange(desc(n))
-colnames(countryVisitedOrdered)[1] <- "Country"
+
+colnames(countryVistorsGrouped)[1] <- "Country"
 
 # Get the polygons for the world
 world <- rnaturalearth::ne_countries(type = "countries", scale = "medium", returnclass = "sf")
 
 # Merge in my example data
-world <- merge(world, countryVisitedOrdered, by.x = "admin", by.y = "Country", all.x = TRUE)
+world <- merge(world, countryVistorsGrouped, by.x = "admin", by.y = "Country", all.x = TRUE)
 
 # Plot with ggplot
 ggplot(data = world) +
-  geom_sf(aes(fill = countryVisitedOrdered)) + 
+  geom_sf(aes(fill = n)) + 
   guides(fill=guide_legend(title="Visitor Arrivals by Usual Country of Residence\n(number)")) +
   theme(legend.title = element_text(size = 9))
 
