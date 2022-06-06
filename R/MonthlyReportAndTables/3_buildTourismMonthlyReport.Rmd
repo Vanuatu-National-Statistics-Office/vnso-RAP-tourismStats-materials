@@ -60,10 +60,6 @@ xAxisText <- list(
 tourismProcessedFile<- file.path(outputDataFolder, "OUT_PROC_Clean_Example.csv")
 tourismProcessed <- read.csv(tourismProcessedFile, header = TRUE, na.strings = c("","NA","NULL","null"))
 
-# Get the current month and year of data
-currentMonth <- unique(tourismProcessed$Month)
-currentYear <- unique(tourismProcessed$Year)
-
 # Read in the previously published historical TOURISM data from output folder of the repository 
 
 tourismHistoricFile<- file.path(outputDataFolder, "SEC_OUT_HIST_DATA.csv")
@@ -108,7 +104,7 @@ traveling to outer islands"),
 
 
 # Round the indicator values
-#nsdpIndicators$`Indicator Value` <- round(nsdpIndicators$`Indicator Value`, digits = 2)
+nsdpIndicators$`Indicator Value` <- round(nsdpIndicators$`Indicator Value`, digits = 2)
 
 # Initialize a flextable object for NSDP table
 indicatorsTable <- flextable(nsdpIndicators)
@@ -148,6 +144,7 @@ indicatorsTable
 ```{r visitors arrivals through time, fig.height=5, fig.width = 15}
 # Calculate value of visitors by Air and Cruise for current month for historical data
 
+### The following needs a value for "currentMonth" - needs either setting as a value or extracting from data
 VisitorsValue <- tourismHistoric %>%
   filter(Month == currentMonth)
 
@@ -186,7 +183,7 @@ countryVistorsGrouped <- tourismProcessed %>%
   filter(port %in% c("SAIR","SAIRP","VAIR","VAIRP"))%>%
   filter(visitor_resident %in% ("Visitor"))%>%
   filter(arr_depart %in%("ARRIVAL"))%>%
-  group_by(visitors_by_region) %>%
+  group_by(visiors_by_region) %>%
   count()
 
 # Drop Vanuatu
